@@ -9,8 +9,8 @@ const Navbar = () => {
     <Stack direction='row'
     justifyContent='space-around'
     sx={{ gap: { sm:'122px' , xs: '40px'}, mt: { sm: '32px', xs:'20px'},
-    justifyContent: 'none'}} px='20px'> {/* This helps us make the page responsive with depending the different sizes of the screen*/}
-      <Link to="/">          {/* This will help us redirect back a page when clicked */}
+    justifyContent: 'none'}} px='20px'>             {/* This helps us make the page responsive with depending the different sizes of the screen*/}
+      <Link to="/">                                 {/* This will help us redirect back a page when clicked */}
         <img src={Logo} alt="logo" style={{
           width: '48px',
           height: '48px',
@@ -29,7 +29,8 @@ const Navbar = () => {
           >Home</Link>
           <a href='#exercises' style={{                 // This will help us redirect to our Exercise page //
           textDecoration: 'none',
-          color: '#3A1212'}}
+          color: '#3A1212',
+          borderBottom: '3px solid #33FFBD'}}
           > Exercises </a>
       </Stack>
     </Stack>
