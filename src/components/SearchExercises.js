@@ -1,7 +1,38 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'; //useState helps us keep track of changes inside our React components
+import { exerciseOptions, fetchData } from '../utils/fetchData';
+import HorizontalScrollbar from './HorizontalScrollbar';
 
-const SearchExercises = () => {
+const SearchExercises = ({ setExercises, bodyPart, setBodyPart }) => {              // All of theser props are being pulled from Home.js page
+    const [search, setSearch] = useState('')                                 
+    const [bodyParts, setBodyParts] = useState([])                                  // At start it will be an empty array
+    
+    useEffect(() => {
+        const fetchExercisesData = async () => {                                    // This will help us fetch the catogiries as soon as the page open/start
+            const bodyPartsData = await fetchData('https://exercisedb.p.rapidapi.com/exercises/bodyPartList', exerciseOptions);
+
+            setBodyParts(['all', ...bodyPartsData]);                                // Once we get the data we set the BodyParts and disaplay all the body parts that we get
+        }
+        fetchExercisesData();                                                       // We want to call this function as soon as the app loads
+    }, [])                                                                          // Our dependecy array is empty because we want this to render at the start of the page once
+
+
+    const handleSearch = async () => {                                              //async means that the data will take some time to populate
+        if(search) {
+            const exercisesData = await fetchData('https://exercisedb.p.rapidapi.com/exercises', exerciseOptions );
+
+            const searchedExercises = exercisesData.filter(                         // We are applying different policies to our search function aka filtering them
+                (exercise) => exercise.name.toLowerCase().includes(search)          // This helps with searching for exercises with its name
+                || exercise.target.toLowerCase().includes(search)                   // This helps with searching for exercises with its target(what part of the muscul , EX: triceps)
+                || exercise.equipment.toLowerCase().includes(search)                // This helps with searching for exercises with its equipment
+                || exercise.bodyPart.toLowerCase().includes(search)                 // This helps with searching for exercises with its bodypart
+            );
+
+            setSearch('');                                                          // At the refresh/reload the string will be empty
+            setExercises(searchedExercises);                                        // After the user inputs/searches for any exercises, it will disaply the specific exercises
+        }
+
+    }
   return (
     <Stack alignItems='center' mt='37px'
     justifyContent='center' p='20px'
@@ -27,8 +58,8 @@ const SearchExercises = () => {
                 borderRadius: '40px'
             }}
             height='80px'
-            value=''
-            onChange={(e) => {}}
+            value={search}
+            onChange={(e) => setSearch(e.target.value.toLowerCase())}      // we want o make sure that our typing is lowercase
             placeholder='Search Exercises'
             type='text'
         />
@@ -42,11 +73,14 @@ const SearchExercises = () => {
             height: '56px',
             position: 'absolute',
             right: '0'
-        }}
+            }}
+            onClick={handleSearch}
         >
             Search
         </Button>
-
+    </Box>
+    <Box sx={{ position: 'relative', width: '100%', p: '20px'}}>
+            <HorizontalScrollbar data={bodyParts} bodyPart={bodyPart} setBodyPart={setBodyPart} />
     </Box>
     </Stack>
   )
